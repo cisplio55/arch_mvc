@@ -6,15 +6,13 @@ from src.authantication.models import Register
 from .models import Product, Cart
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
-
+from .schema import *
 product_controller = Blueprint("product", __name__)
-
-@product_controller.route('/product/create_product', methods = ["POST"])
+@product_controller.route('/product/create_product', methods = ["POST"], defaults={'schema': create_product_schema})
 @jwt_required(fresh=False)
-def create_product():
+def create_product(schema):
     try:
         enteredInfo = getenteredInfo(request)
-        print(enteredInfo)
         product = Product(
             product_name    =  enteredInfo.get("product_name"),
             product_desc    =  enteredInfo.get("product_desc"),
@@ -28,9 +26,9 @@ def create_product():
         return errorresponse("register", e)
 
 
-@product_controller.route('/product/add_to_cart', methods = ["POST"])
+@product_controller.route('/product/add_to_cart', methods = ["POST"], defaults={'schema': add_to_cart_schema})
 @jwt_required(fresh=False)
-def add_to_cart():
+def add_to_cart(schema):
     try:
         enteredInfo = getenteredInfo(request)
         product_id = enteredInfo.get("product_id")

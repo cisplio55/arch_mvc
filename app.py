@@ -17,6 +17,20 @@ app.register_blueprint(product_controller, url_prefix="/root")
 app.register_blueprint(order_controller, url_prefix="/root")
 
 
+from yml_handler.flask_route_to_swagger import generate_swagger_yaml
+from util import dataresponse, errorresponse
+@app.route("/utility/swagger/UI/generate_yaml")
+def generate_yaml():
+    try:
+        generate_swagger_yaml(app)
+        return dataresponse("generate_yaml", {"mesage" : "Swagger YAML file generated successfully"})
+    except Exception as e:
+        errorresponse("generate_yaml", e)
+# generate_swagger_yaml(app) # Create swagger file automatically on flask run.
+
+
+
+
 for rule in app.url_map.iter_rules():
    print(str(rule))
 if __name__ == "__main__":

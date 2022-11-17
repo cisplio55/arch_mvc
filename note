@@ -1,0 +1,3 @@
+
+from app.helpers.Utility import toDictionaryArray
+https://devstudioonline.com/article/create-python-flask-app-in-mvc-format

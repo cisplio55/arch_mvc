@@ -7,7 +7,7 @@ class Register(Document):
     username = StringField(required=True, max_length=20)
     password = StringField(required=True, max_length=100)
     email    = StringField(required=True, max_length=50)
-    phone    = StringField(required=False, max_length=50)
+    phone    = StringField(required=False, max_length=10)
 
 
 

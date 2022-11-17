@@ -1,0 +1,241 @@
+consumes:
+- application/json
+host: pypa-api-development.endpoints.huko-312103.cloud.goog
+info:
+  description: Pypa API specification, across all products.
+  title: Pypa Endpoint for Development
+  version: 1.0.0
+paths:
+  "/root/authentication/login":
+    options:
+      description: Authentication.Login
+      parameters:
+      - &id001
+        description: ' Root Authentication Login'
+        in: body
+        name: Authentication.Login
+        schema:
+          properties:
+            password:
+              maxLength: 100
+              minLength: 5
+              type: string
+            username:
+              maxLength: 20
+              minLength: 5
+              type: string
+          required:
+          - username
+          - password
+          type: object
+      produces:
+      - application/json
+      responses:
+        200: &id002
+          description: Success
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Authentication.Login
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - *id001
+      responses:
+        200: *id002
+      summary: Authentication.Login
+  "/root/authentication/register":
+    options:
+      description: Authentication.Register
+      parameters:
+      - &id003
+        description: ' Root Authentication Register'
+        in: body
+        name: Authentication.Register
+        schema:
+          properties:
+            email:
+              maxLength: 50
+              type: string
+            password:
+              maxLength: 100
+              minLength: 5
+              type: string
+            phone:
+              maxLength: 10
+              type: string
+            username:
+              maxLength: 20
+              minLength: 5
+              type: string
+          required:
+          - username
+          - password
+          - email
+          type: object
+      produces:
+      - application/json
+      responses:
+        200: &id004
+          description: Success
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Authentication.Register
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - *id003
+      responses:
+        200: *id004
+      summary: Authentication.Register
+  "/root/order/place_order":
+    options:
+      description: Order.Place Order
+      parameters:
+      - &id005
+        description: ' Root Order Place Order'
+        in: body
+        name: Order.Place Order
+        schema: {}
+      produces:
+      - application/json
+      responses:
+        200: &id006
+          description: Success
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Order.Place Order
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - *id005
+      responses:
+        200: *id006
+      summary: Order.Place Order
+  "/root/product/add_to_cart":
+    options:
+      description: Product.Add To Cart
+      parameters:
+      - &id007
+        description: ' Root Product Add To Cart'
+        in: body
+        name: Product.Add To Cart
+        schema:
+          properties:
+            product_id:
+              maxLength: 30
+              minLength: 24
+              type: string
+          required:
+          - product_id
+          type: object
+      produces:
+      - application/json
+      responses:
+        200: &id008
+          description: Success
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Product.Add To Cart
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - *id007
+      responses:
+        200: *id008
+      summary: Product.Add To Cart
+  "/root/product/create_product":
+    options:
+      description: Product.Create Product
+      parameters:
+      - &id009
+        description: ' Root Product Create Product'
+        in: body
+        name: Product.Create Product
+        schema:
+          properties:
+            is_featured:
+              maxLength: 10
+              type: boolean
+            product_desc:
+              maxLength: 100
+              minLength: 5
+              type: string
+            product_name:
+              maxLength: 30
+              minLength: 5
+              type: string
+            product_price:
+              type: number
+          required:
+          - product_name
+          - product_price
+          type: object
+      produces:
+      - application/json
+      responses:
+        200: &id010
+          description: Success
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Product.Create Product
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - *id009
+      responses:
+        200: *id010
+      summary: Product.Create Product
+  "/utility/swagger/UI/generate_yaml":
+    get:
+      consumes:
+      - application/json
+      parameters: []
+      responses:
+        200: &id011
+          description: Success
+      summary: Generate Yaml
+    options:
+      description: Generate Yaml
+      parameters: []
+      produces:
+      - application/json
+      responses:
+        200: *id011
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Generate Yaml
+produces:
+- application/json
+schemes:
+- https
+- http
+security:
+- api_key: []
+  pypa_auth: []
+securityDefinitions:
+  api_key:
+    in: header
+    name: x-api-key
+    type: apiKey
+  pypa_auth:
+    authorizationUrl: ''
+    flow: implicit
+    type: oauth2
+    x-google-audiences: pypa-api-development.endpoints.huko-312103.cloud.goog
+    x-google-issuer: development-endpoint-service@huko-312103.iam.gserviceaccount.com
+    x-google-jwks_uri: 'https: //www.googleapis.com/service_accounts/v1/metadata/x509/development-endpoint-service@huko-312103.iam.gserviceaccount.com'
+swagger: '2.0'
+x-google-endpoints:
+- name: pypa-api-development.endpoints.huko-312103.cloud.goog
+  target: 34.149.86.33

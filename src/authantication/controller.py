@@ -4,11 +4,12 @@ from flask import request
 from .models import Register
 import bcrypt
 from flask_jwt_extended import create_access_token
+from .schema import *
 
 auth_controller = Blueprint("authentication", __name__)
 
-@auth_controller.route('/authentication/register', methods = ["POST"])
-def register():
+@auth_controller.route('/authentication/register', methods = ["POST"], defaults={'schema': register_schema})
+def register(schema):
     try:
         enteredInfo = getenteredInfo(request)
         obj = Register.objects(username=enteredInfo.get("username"))
@@ -21,8 +22,8 @@ def register():
     except Exception as e:
         return errorresponse("register", e)
 
-@auth_controller.route('/authentication/login', methods = ["POST"])
-def login():
+@auth_controller.route('/authentication/login', methods = ["POST"], defaults={'schema': login_schema})
+def login(schema):
     try:
         enteredInfo = getenteredInfo(request)
         obj = Register.objects(username=enteredInfo.get("username")).first()
