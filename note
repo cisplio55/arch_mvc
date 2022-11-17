@@ -1,0 +1,37 @@
+DB_URI = "mongodb+srv://subhankar:subhankar2028@cluster0.vwov3tz.mongodb.net/PractiseDb?ssl=true&ssl_cert_reqs=CERT_NONE"
+
+from mongoengine import *
+connect(host=DB_URI)
+
+class BlogPost(Document):
+    title = StringField(required=True, max_length=200)
+   #  posted = DateTimeField(default=datetime.datetime.utcnow)
+    tags = ListField(StringField(max_length=50))
+    meta = {'allow_inheritance': True}
+
+class TextPost(BlogPost):
+    content = StringField(required=True)
+
+class LinkPost(BlogPost):
+    url = StringField(required=True)
+
+
+post1 = TextPost(title='Using MongoEngine', content='See the tutorial')
+post1.tags = ['mongodb', 'mongoengine']
+post1.save()
+
+
+
+
+To get token or user id from JWT
+    get_jwt_identity()
+
+
+from bson.objectid import ObjectId
+Doc.objects(_id=ObjectId("85a2c854002c893dd7756b5g"))
+Docs.objects.get(id='4f4381f4e779897a2c000009')
+Docs.objects(_id=pymongo.objectid.ObjectId('4f4381f4e779897a2c000009'))
+Docs.objects(pk='4f4381f4e779897a2c000009')
+
+Worked fine:
+    x = Register.objects.get(pk='63754bb19e3ca375e7228e84')
