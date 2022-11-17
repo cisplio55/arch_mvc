@@ -3,10 +3,8 @@ from util import *
 from flask import request
 from .models import Order
 from src.products.models import Cart
-from src.authantication.models import Register
-import bcrypt
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
 
 order_controller = Blueprint("order", __name__)
 
@@ -17,6 +15,7 @@ def place_order():
         enteredInfo = getenteredInfo(request)
         cart_data = Cart.objects(user=get_jwt_identity())
 
+        #TODO Implimentation under process.
         # Order(
         #     order_price     =   "",
         #     dlivery_address =   "",
@@ -29,4 +28,3 @@ def place_order():
         return dataresponse("product", {"data" : "cart_data", "message" : "Order placed successfully."})
     except Exception as e:
         return errorresponse("register", e)
-

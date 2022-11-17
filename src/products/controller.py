@@ -4,9 +4,8 @@ from flask import request
 from .models import Product
 from src.authantication.models import Register
 from .models import Product, Cart
-import bcrypt
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
 
 product_controller = Blueprint("product", __name__)
 
@@ -53,7 +52,4 @@ def add_to_cart():
         return dataresponse("add_to_cart", {"message" : "Product added to cart."})
     except Exception as e:
         return errorresponse("add_to_cart", e)
-
-
-
-
+        

@@ -4,7 +4,6 @@ from util import DB_URI
 connect(host=DB_URI)
 
 class Register(Document):
-    # _id      = StringField(required=True,  max_length=20)
     username = StringField(required=True, max_length=20)
     password = StringField(required=True, max_length=100)
     email    = StringField(required=True, max_length=50)
