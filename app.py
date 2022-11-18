@@ -19,30 +19,21 @@ jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = "this-is-secret-key"
 
 
-# ----------------------------------------------------------------------------
-# Swagger utility functions, Generate swagger UI file.
-# ----------------------------------------------------------------------------
-
-
-
 # -----------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------
-# Bind controllers
+# Bind controllers,
 # -----------------------------------------------------------------------------------------
 app.add_url_rule("/root/authentication/register",  view_func=register, methods = ['POST'])
 app.add_url_rule("/root/authentication/login",  view_func=login, methods = ['POST'])
 app.add_url_rule("/root/product/create_product",  view_func=create_product, methods = ['POST'])
 app.add_url_rule("/root/product/add_to_cart",  view_func=add_to_cart, methods = ['POST'])
+# -----------------------------------------------------------------------------------------
 
-
-
-
-
-
-# ----------------------------------------------------------------------------
-# Swagger utility functions
-# ----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
+# Make sure yml_handler directory is available with app.py file.
+# Swagger utility functions, Just copy this block of code in any project
+# -----------------------------------------------------------------------------------------
 from flask import Flask, render_template, request
 from yaml.loader import SafeLoader
 from flask import Response
@@ -53,7 +44,6 @@ from yml_handler.swagger_yaml_to_excell import *
 @app.route('/')
 def upload_File_page(name=None):  # To return the file upload UI.
     return render_template('uploadFile.html', name=name)
-
 
 @app.route('/utility/swagger/UI/generate_csv_data', methods=['POST'])
 def generate_csv_data():
@@ -100,8 +90,6 @@ def generate_yaml():
         errorresponse("generate_yaml", e)
 # generate_swagger_yaml(app) # Create swagger file automatically on flask run.
 # ----------------------------------------------------------------------------
-
-
 
 
 
