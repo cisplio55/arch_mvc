@@ -1,6 +1,8 @@
 import yaml
 import re
 import traceback
+import inspect
+from undecorated import undecorated
 
 base_format = {
     'swagger': '2.0',
@@ -133,22 +135,14 @@ def generate_swagger_yaml(app):
                     # Prepare the body with schema.
                     # ----------------------------------------------
                     if method != "get":
-                        default_schema = {}
-                        
-                        try:
-                            default_schema = rule.defaults.get("schema", {})
-                        except:
-                            message = "Default schema not available in : " + str(rule)
-                            print("***", message)
-                            # add_warning(message)
-
+                        default_schema = inspect.getcallargs(undecorated(app.view_functions[endpoint])).get("schema")
                         body_parameters = [
                             {
                                 "in": "body",
                                 "name": ep_as_desc,
                                 "description": description,
                                 # rule.defaults.get("schema") if rule.defaults is not None else {} #rule.defaults#rv.get_json() if "properties" in rv.get_json() else {},
-                                "schema": default_schema
+                                "schema": default_schema or {}
                             }
                         ]
                     # ----------------------------------------------

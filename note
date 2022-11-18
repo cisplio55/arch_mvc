@@ -28,3 +28,9 @@ class tastClass:
 app.add_url_rule("/root",  view_func=tastClass.index, methods = ['GET', 'POST'])
 
 print(app.view_functions["index"](get_schema=True))
+
+
+
+
+import inspect
+print(inspect.getcallargs(app.view_functions["register"]))

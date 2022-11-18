@@ -8,12 +8,12 @@ info:
 paths:
   "/root/authentication/login":
     options:
-      description: Authentication.Login
+      description: Login
       parameters:
       - &id001
         description: ' Root Authentication Login'
         in: body
-        name: Authentication.Login
+        name: Login
         schema:
           properties:
             password:
@@ -36,7 +36,7 @@ paths:
       security:
       - api_key: []
         pypa_auth: []
-      summary: Authentication.Login
+      summary: Login
     post:
       consumes:
       - application/json
@@ -44,15 +44,15 @@ paths:
       - *id001
       responses:
         200: *id002
-      summary: Authentication.Login
+      summary: Login
   "/root/authentication/register":
     options:
-      description: Authentication.Register
+      description: Register
       parameters:
       - &id003
         description: ' Root Authentication Register'
         in: body
-        name: Authentication.Register
+        name: Register
         schema:
           properties:
             email:
@@ -82,7 +82,7 @@ paths:
       security:
       - api_key: []
         pypa_auth: []
-      summary: Authentication.Register
+      summary: Register
     post:
       consumes:
       - application/json
@@ -90,41 +90,15 @@ paths:
       - *id003
       responses:
         200: *id004
-      summary: Authentication.Register
-  "/root/order/place_order":
-    options:
-      description: Order.Place Order
-      parameters:
-      - &id005
-        description: ' Root Order Place Order'
-        in: body
-        name: Order.Place Order
-        schema: {}
-      produces:
-      - application/json
-      responses:
-        200: &id006
-          description: Success
-      security:
-      - api_key: []
-        pypa_auth: []
-      summary: Order.Place Order
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - *id005
-      responses:
-        200: *id006
-      summary: Order.Place Order
+      summary: Register
   "/root/product/add_to_cart":
     options:
-      description: Product.Add To Cart
+      description: Add To Cart
       parameters:
-      - &id007
+      - &id005
         description: ' Root Product Add To Cart'
         in: body
-        name: Product.Add To Cart
+        name: Add To Cart
         schema:
           properties:
             product_id:
@@ -137,28 +111,28 @@ paths:
       produces:
       - application/json
       responses:
-        200: &id008
+        200: &id006
           description: Success
       security:
       - api_key: []
         pypa_auth: []
-      summary: Product.Add To Cart
+      summary: Add To Cart
     post:
       consumes:
       - application/json
       parameters:
-      - *id007
+      - *id005
       responses:
-        200: *id008
-      summary: Product.Add To Cart
+        200: *id006
+      summary: Add To Cart
   "/root/product/create_product":
     options:
-      description: Product.Create Product
+      description: Create Product
       parameters:
-      - &id009
+      - &id007
         description: ' Root Product Create Product'
         in: body
-        name: Product.Create Product
+        name: Create Product
         schema:
           properties:
             is_featured:
@@ -181,27 +155,27 @@ paths:
       produces:
       - application/json
       responses:
-        200: &id010
+        200: &id008
           description: Success
       security:
       - api_key: []
         pypa_auth: []
-      summary: Product.Create Product
+      summary: Create Product
     post:
       consumes:
       - application/json
       parameters:
-      - *id009
+      - *id007
       responses:
-        200: *id010
-      summary: Product.Create Product
+        200: *id008
+      summary: Create Product
   "/utility/swagger/UI/generate_yaml":
     get:
       consumes:
       - application/json
       parameters: []
       responses:
-        200: &id011
+        200: &id009
           description: Success
       summary: Generate Yaml
     options:
@@ -210,7 +184,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: *id011
+        200: *id009
       security:
       - api_key: []
         pypa_auth: []

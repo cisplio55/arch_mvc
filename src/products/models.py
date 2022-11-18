@@ -5,22 +5,39 @@ from src.authantication.models import Register
 connect(host=DB_URI)
 
 
-
 class Product(Document):
-    product_name    = StringField(required=True, max_length=30)
-    product_desc    = StringField(required=False, max_length=100)
-    product_price   = FloatField(required=True, min_value=1)
-    is_featured     = BooleanField(required=False)
-    created_by      = ReferenceField(Register, required=True, reverse_delete_rule=CASCADE)
+    product_name = StringField(required=True, max_length=30)
+    product_desc = StringField(required=False, max_length=100)
+    product_price = FloatField(required=True, min_value=1)
+    is_featured = BooleanField(required=False)
+    created_by = ReferenceField(
+        Register, required=True, reverse_delete_rule=CASCADE)
+
+    create_product_schema = {
+        "type": "object",
+        "properties": {
+            "product_name": {"type": "string", "minLength": 5, "maxLength": 30},
+            "product_desc": {"type": "string", "minLength": 5, "maxLength": 100},
+            "product_price": {"type": "number"},
+            "is_featured": {"type": "boolean", "maxLength": 10},
+        },
+        "required": ["product_name", "product_price"]
+    }
 
 
 class Cart(Document):
-    user        = ReferenceField(Register, required=True, reverse_delete_rule=CASCADE)
-    product     = ReferenceField(Product, required=True, reverse_delete_rule=CASCADE)
-    count       = IntField(min_value=1)
+    user = ReferenceField(Register, required=True, reverse_delete_rule=CASCADE)
+    product = ReferenceField(Product, required=True,
+                             reverse_delete_rule=CASCADE)
+    count = IntField(min_value=1)
 
-
-
+    add_to_cart_schema = {
+        "type": "object",
+        "properties": {
+            "product_id": {"type": "string", "minLength": 24, "maxLength": 30},
+        },
+        "required": ["product_id"]
+    }
 
 
 # from abc import ABC, abstractmethod
@@ -44,7 +61,7 @@ class Cart(Document):
 # # ----------------------------
 
 # class normal_user(signup_interface, signin_interface, mongodb):
-    
+
 #     def signup(self):
 #         try:
 #             enteredInfo = getenteredInfo(request)
@@ -72,7 +89,6 @@ class Cart(Document):
 #         print("user.signin")
 
 
-
 # class user_profile(signup_interface):
 
 #     def __init__(self):
@@ -83,7 +99,3 @@ class Cart(Document):
 
 #     def update_user_profile(self):
 #         pass
-
-
-
-
