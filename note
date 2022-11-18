@@ -1,3 +1,30 @@
 
 from app.helpers.Utility import toDictionaryArray
 https://devstudioonline.com/article/create-python-flask-app-in-mvc-format
+
+https://flask.palletsprojects.com/en/2.2.x/api/#flask.Flask.add_url_rule
+
+
+app.url_map stores the object that maps and matches rules with endpoints. app.view_functions maps endpoints to view functions.
+
+
+
+
+login_schema = {
+    "type" : "object",
+    "properties" : {
+        "username"  : {"type" : "string", "minLength": 5, "maxLength": 20},
+        "password"  : {"type" : "string", "minLength": 5, "maxLength": 100},
+    },
+    "required": ["username", "password"]
+}
+
+class tastClass:
+   def index(schema = login_schema, get_schema=False):
+      if get_schema: return schema
+      # Input validation with schema
+      return "Processed data."
+
+app.add_url_rule("/root",  view_func=tastClass.index, methods = ['GET', 'POST'])
+
+print(app.view_functions["index"](get_schema=True))
