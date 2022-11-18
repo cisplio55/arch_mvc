@@ -6,11 +6,31 @@ info:
   title: Pypa Endpoint for Development
   version: 1.0.0
 paths:
+  "/":
+    get:
+      consumes:
+      - application/json
+      parameters: []
+      responses:
+        200: &id001
+          description: Success
+      summary: Upload File Page
+    options:
+      description: Upload File Page
+      parameters: []
+      produces:
+      - application/json
+      responses:
+        200: *id001
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Upload File Page
   "/root/authentication/login":
     options:
       description: Login
       parameters:
-      - &id001
+      - &id002
         description: ' Root Authentication Login'
         in: body
         name: Login
@@ -31,7 +51,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: &id002
+        200: &id003
           description: Success
       security:
       - api_key: []
@@ -41,15 +61,15 @@ paths:
       consumes:
       - application/json
       parameters:
-      - *id001
+      - *id002
       responses:
-        200: *id002
+        200: *id003
       summary: Login
   "/root/authentication/register":
     options:
       description: Register
       parameters:
-      - &id003
+      - &id004
         description: ' Root Authentication Register'
         in: body
         name: Register
@@ -77,7 +97,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: &id004
+        200: &id005
           description: Success
       security:
       - api_key: []
@@ -87,15 +107,15 @@ paths:
       consumes:
       - application/json
       parameters:
-      - *id003
+      - *id004
       responses:
-        200: *id004
+        200: *id005
       summary: Register
   "/root/product/add_to_cart":
     options:
       description: Add To Cart
       parameters:
-      - &id005
+      - &id006
         description: ' Root Product Add To Cart'
         in: body
         name: Add To Cart
@@ -111,7 +131,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: &id006
+        200: &id007
           description: Success
       security:
       - api_key: []
@@ -121,15 +141,15 @@ paths:
       consumes:
       - application/json
       parameters:
-      - *id005
+      - *id006
       responses:
-        200: *id006
+        200: *id007
       summary: Add To Cart
   "/root/product/create_product":
     options:
       description: Create Product
       parameters:
-      - &id007
+      - &id008
         description: ' Root Product Create Product'
         in: body
         name: Create Product
@@ -155,7 +175,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: &id008
+        200: &id009
           description: Success
       security:
       - api_key: []
@@ -165,17 +185,43 @@ paths:
       consumes:
       - application/json
       parameters:
-      - *id007
+      - *id008
       responses:
-        200: *id008
+        200: *id009
       summary: Create Product
+  "/utility/swagger/UI/generate_csv_data":
+    options:
+      description: Generate Csv Data
+      parameters:
+      - &id010
+        description: ' Utility Swagger Ui Generate Csv Data'
+        in: body
+        name: Generate Csv Data
+        schema: {}
+      produces:
+      - application/json
+      responses:
+        200: &id011
+          description: Success
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Generate Csv Data
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - *id010
+      responses:
+        200: *id011
+      summary: Generate Csv Data
   "/utility/swagger/UI/generate_yaml":
     get:
       consumes:
       - application/json
       parameters: []
       responses:
-        200: &id009
+        200: &id012
           description: Success
       summary: Generate Yaml
     options:
@@ -184,7 +230,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: *id009
+        200: *id012
       security:
       - api_key: []
         pypa_auth: []
