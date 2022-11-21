@@ -14,11 +14,11 @@ app = Flask(
     static_folder='frontend',
 )
 
-
+# -----------------------------------------------------------------------------------------
+# JWT authentication.
+# -----------------------------------------------------------------------------------------
 jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = "this-is-secret-key"
-
-
 # -----------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ app.add_url_rule("/root/product/add_to_cart",  view_func=add_to_cart, methods = 
 # -----------------------------------------------------------------------------------------
 # Make sure yml_handler directory is available with app.py file.
 # Swagger utility functions, Just copy this block of code in any project
+# All the imports are capt in this block for easy portability.
 # -----------------------------------------------------------------------------------------
 from flask import Flask, render_template, request
 from yaml.loader import SafeLoader
