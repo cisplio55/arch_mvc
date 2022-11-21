@@ -6,6 +6,16 @@ from src.order.controller import *
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from yml_handler.flask_route_to_swagger import generate_swagger_yaml
 from util import dataresponse, errorresponse
+from flask import Flask, render_template, request
+from yaml.loader import SafeLoader
+from flask import Response
+import io
+import yaml
+from yml_handler.swagger_yaml_to_excell import *
+from mongoengine import *
+from util import DB_URI
+
+connect(host=DB_URI)   # Provide database connection to mongo engene.
 
 app = Flask(
     __name__,
@@ -31,17 +41,19 @@ app.add_url_rule("/root/product/get_product_details/<int:product_id>/<string:pro
 app.add_url_rule("/root/product/add_to_cart",  view_func=add_to_cart, methods = ['POST'])
 # -----------------------------------------------------------------------------------------
 
+
+
 # -----------------------------------------------------------------------------------------
 # Make sure yml_handler directory is available with app.py file.
 # Swagger utility functions, Just copy this block of code in any project
 # All the imports are capt in this block for easy portability.
 # -----------------------------------------------------------------------------------------
-from flask import Flask, render_template, request
-from yaml.loader import SafeLoader
-from flask import Response
-import io
-import yaml
-from yml_handler.swagger_yaml_to_excell import *
+# from flask import Flask, render_template, request
+# from yaml.loader import SafeLoader
+# from flask import Response
+# import io
+# import yaml
+# from yml_handler.swagger_yaml_to_excell import *
 
 @app.route('/')
 def upload_File_page(name=None):  # To return the file upload UI.
@@ -104,6 +116,3 @@ for rule in app.url_map.iter_rules():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-

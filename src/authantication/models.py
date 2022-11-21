@@ -1,7 +1,5 @@
 
 from mongoengine import *
-from util import DB_URI
-connect(host=DB_URI)
 
 class Register(Document):
     username = StringField(required=True, max_length=20)

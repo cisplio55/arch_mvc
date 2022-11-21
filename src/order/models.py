@@ -1,8 +1,6 @@
 
 from mongoengine import *
-from util import DB_URI
 from src.authantication.models import Register
-connect(host=DB_URI)
 
 class Order(Document):
     order_price     = FloatField(required=True, min_value=1)
