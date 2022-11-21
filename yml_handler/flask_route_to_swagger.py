@@ -59,28 +59,65 @@ def rm_sc_make_title(str):
 
 def CreateSwaggerSpecificRoute(rule):
     route_path = str(rule)   # /multi/level/url/test/{user_id}/{org_id}
+    for s in re.findall(r'[^<]+:', str(rule)):
+        route_path = route_path.replace(s, "")
     route_path = route_path.replace("<", "{")
     route_path = route_path.replace(">", "}")
     return route_path
 
 
+def CreateSwaggerSpecificParameterArray(rule):
+    replacement = {"int":"integer"}
+    parameter_names = []#[s.replace(">", "") for s in re.findall(r'[^<]+>', str(rule))]
+    for s in re.findall(r'[^<]+>', str(rule)):
+        s = s.replace(">", "")
+        if ":" in s:   # "type:param_name"
+            param = list(s.split(":"))
+            if param[0] in replacement.keys(): # Replace the type with swagger specific keword. e.g. int > integer
+                param[0] = replacement[param[0]]
+            parameter_names.append(param)
+        else:
+            parameter_names.append(("string",s))
+    return parameter_names
+
+
+def get_default_args(func):
+    signature = inspect.signature(func)
+    return {
+        k: v.default
+        for k, v in signature.parameters.items()
+        if v.default is not inspect.Parameter.empty
+    }
+
+
 def generate_swagger_yaml(app):
     try:
         for rule in app.url_map.iter_rules():
-            # print(rule)
-            # print("rule : ", rule)
-            # print("subdomain : ", rule.subdomain)
-            # print("methods : ", rule.methods)
-            # print("build_only : ", rule.build_only)
-            # print("endpoint : ", rule.endpoint)
-            # print("strict_slashes : ", rule.strict_slashes)
-            # print("merge_slashes : ", rule.merge_slashes)
-            # print("redirect_to : ", rule.redirect_to)
-            # print("alias : ", rule.alias)
-            # print("host : ", rule.host)
-            # print("websocket : ", rule.websocket)
-            # print(rule.arguments)
-            # print("****************************")
+            # print('map', rule.map)
+            # print('arguments',  rule.arguments)
+            # print('bind',  str(rule.bind))
+            # print('build',  str(rule.build))
+            # print('build_compare_key',  str(rule.build_compare_key))
+            # print('build_only',  rule.build_only)
+            # print('compile',  str(rule.compile))
+            # print('defaults',  rule.defaults)
+            # print('empty',  str(rule.empty))
+            # print('endpoint',  rule.endpoint)
+            # print('get_converter',  str(rule.get_converter))
+            # print('get_empty_kwargs',  str(rule.get_empty_kwargs))
+            # print('get_rules',  rule.get_rules)
+            # print('host',  rule.host)
+            # print('methods',  rule.methods)
+            # print('provide_automatic_options',  rule.provide_automatic_options)
+            # print('provides_defaults_for',  str(rule.provides_defaults_for))
+            # print('redirect_to',  rule.redirect_to)
+            # print('refresh',  str(rule.refresh))
+            # print('rule',  str(rule.rule))
+            # print('strict_slashes',  rule.strict_slashes)
+            # print('subdomain',  rule.subdomain)
+            # print('suitable_for',  str(rule.suitable_for))
+            # print('websocket', rule.websocket)
+            # print("**************************************")
 
             # Do not include static urls. So just skip if the there is static rule.
             if rule.endpoint == "static":
@@ -96,10 +133,8 @@ def generate_swagger_yaml(app):
             endpoint = rule.endpoint
             desc_200 = {"description": "Success"}
             route_path = CreateSwaggerSpecificRoute(rule)
-            parameter_names = list(rule.arguments)
-            # Do not want to keep the schema parameter in swagger.
-            if "schema" in parameter_names:
-                parameter_names.remove("schema")
+            # Create a parameter array from rule
+            parameter_names = CreateSwaggerSpecificParameterArray(rule) # list(rule.arguments) # has to replace it
             # -----------------------------------
 
             description = rm_sc_make_title(route_path)  # Make a description
@@ -121,12 +156,12 @@ def generate_swagger_yaml(app):
             }
 
             param_array = [{
-                'name': param_name,  # Get the first parameter from url
+                'name': param[1],  # Get the first parameter from url
                 'in': 'path',
-                'description': "Input for " + param_name,
+                'description': "Input for " + param[1],
                 'required': True,
-                'type': 'string'
-            } for param_name in parameter_names] if parameter_names != [] else []
+                'type': param[0]
+            } for param in parameter_names] if parameter_names != [] else []
 
             http_verbs = ["get", "post", "patch", "put", "delete"]
             for method in http_verbs:
@@ -135,7 +170,9 @@ def generate_swagger_yaml(app):
                     # Prepare the body with schema.
                     # ----------------------------------------------
                     if method != "get":
-                        default_schema = inspect.getcallargs(undecorated(app.view_functions[endpoint])).get("schema")
+                        
+                        default_schema = get_default_args(undecorated(app.view_functions[endpoint])).get("schema")
+                        # default_schema = inspect.getcallargs(undecorated(app.view_functions[endpoint])).get("schema")
                         body_parameters = [
                             {
                                 "in": "body",
@@ -172,6 +209,7 @@ def generate_swagger_yaml(app):
             with open(output_yaml_file, 'w') as f:
                 data = yaml.dump(base_format, f)
 
+
         # -------------------------------------------------
         # Modify the router path to keep inside quotation
         # -------------------------------------------------
@@ -184,6 +222,8 @@ def generate_swagger_yaml(app):
         with open(output_yaml_file, 'w') as file:
             file.write(data)
         # -------------------------------------------------
+
+
         return True
     except Exception as e:
         traceback.print_exc()

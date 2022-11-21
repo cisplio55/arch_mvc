@@ -34,3 +34,16 @@ print(app.view_functions["index"](get_schema=True))
 
 import inspect
 print(inspect.getcallargs(app.view_functions["register"]))
+
+
+
+https://stackoverflow.com/questions/218616/how-to-get-method-parameter-names
+
+>>> inspect.getfullargspec(a_method)
+(['arg1', 'arg2'], None, None, None)
+The other results are the name of the *args and **kwargs variables, and the defaults provided. ie.
+
+>>> def foo(a, b, c=4, *arglist, **keywords): pass
+>>> inspect.getfullargspec(foo)
+(['a', 'b', 'c'], 'arglist', 'keywords', (4,))
+

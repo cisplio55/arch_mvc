@@ -27,6 +27,7 @@ app.config["JWT_SECRET_KEY"] = "this-is-secret-key"
 app.add_url_rule("/root/authentication/register",  view_func=register, methods = ['POST'])
 app.add_url_rule("/root/authentication/login",  view_func=login, methods = ['POST'])
 app.add_url_rule("/root/product/create_product",  view_func=create_product, methods = ['POST'])
+app.add_url_rule("/root/product/get_product_details/<int:product_id>/<string:product_name>/<user_name>",  view_func=get_product_details, methods = ['GET', 'POST'])
 app.add_url_rule("/root/product/add_to_cart",  view_func=add_to_cart, methods = ['POST'])
 # -----------------------------------------------------------------------------------------
 
@@ -100,7 +101,9 @@ def generate_yaml():
 for rule in app.url_map.iter_rules():
    print(str(rule))
 # -----------------------------------------------------------------------------------------
+
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 

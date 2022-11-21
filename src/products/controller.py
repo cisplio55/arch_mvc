@@ -48,3 +48,15 @@ def add_to_cart(schema = Cart.add_to_cart_schema):
     except Exception as e:
         return errorresponse("add_to_cart", e)
         
+
+@jwt_required(fresh=False)
+def get_product_details(product_id, product_name, user_name, schema = Cart.add_to_cart_schema):
+    try:
+        enteredInfo = getenteredInfo(request)
+        # product_id = enteredInfo.get("product_id")
+        print(product_id, product_name, user_name, schema, "$$$$$$$$$$$")
+        # API logic here
+        return dataresponse("get_product_details", {"message" : str(product_id) + " : Product detais."})
+    except Exception as e:
+        return errorresponse("get_product_details", e)
+        

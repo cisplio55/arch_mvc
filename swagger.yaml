@@ -119,7 +119,7 @@ paths:
         description: ' Root Product Add To Cart'
         in: body
         name: Add To Cart
-        schema:
+        schema: &id013
           properties:
             product_id:
               maxLength: 30
@@ -189,11 +189,69 @@ paths:
       responses:
         200: *id009
       summary: Create Product
+  "/root/product/get_product_details/{product_id}/{product_name}/{user_name}":
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - &id010
+        description: Input for product_id
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      - &id011
+        description: Input for product_name
+        in: path
+        name: product_name
+        required: true
+        type: string
+      - &id012
+        description: Input for user_name
+        in: path
+        name: user_name
+        required: true
+        type: string
+      responses:
+        200: &id014
+          description: Success
+      summary: Get Product Details
+    options:
+      description: Get Product Details
+      parameters:
+      - *id010
+      - *id011
+      - *id012
+      - &id015
+        description: ' Root Product Get Product Details  Product Id   Product Name   User
+          Name '
+        in: body
+        name: Get Product Details
+        schema: *id013
+      produces:
+      - application/json
+      responses:
+        200: *id014
+      security:
+      - api_key: []
+        pypa_auth: []
+      summary: Get Product Details
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - *id010
+      - *id011
+      - *id012
+      - *id015
+      responses:
+        200: *id014
+      summary: Get Product Details
   "/utility/swagger/UI/generate_csv_data":
     options:
       description: Generate Csv Data
       parameters:
-      - &id010
+      - &id016
         description: ' Utility Swagger Ui Generate Csv Data'
         in: body
         name: Generate Csv Data
@@ -201,7 +259,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: &id011
+        200: &id017
           description: Success
       security:
       - api_key: []
@@ -211,9 +269,9 @@ paths:
       consumes:
       - application/json
       parameters:
-      - *id010
+      - *id016
       responses:
-        200: *id011
+        200: *id017
       summary: Generate Csv Data
   "/utility/swagger/UI/generate_yaml":
     get:
@@ -221,7 +279,7 @@ paths:
       - application/json
       parameters: []
       responses:
-        200: &id012
+        200: &id018
           description: Success
       summary: Generate Yaml
     options:
@@ -230,7 +288,7 @@ paths:
       produces:
       - application/json
       responses:
-        200: *id012
+        200: *id018
       security:
       - api_key: []
         pypa_auth: []
