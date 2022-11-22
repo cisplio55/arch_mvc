@@ -6,6 +6,7 @@ import json
 from inspect import getframeinfo, stack
 import logging
 import os
+import uuid
 
 DB_URI = "mongodb+srv://subhankar:subhankar2028@cluster0.vwov3tz.mongodb.net/PractiseDb?ssl=true&ssl_cert_reqs=CERT_NONE"
 
@@ -73,3 +74,7 @@ def logger(tag = "", value = "", level = "info"):
 
     else:
         print("!!!UNKNOWN LOGGING LEVEL!!!"+level)
+
+
+def generate_uid():
+    return uuid.uuid4().hex

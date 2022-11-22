@@ -1,11 +1,11 @@
 
 from mongoengine import *
 from src.authantication.models import Register
-
+from util import generate_uid
 
 class Product(Document):
     product_name = StringField(required=True, max_length=30)
-    product_desc = StringField(required=False, max_length=100)
+    product_desc = StringField(required=False, max_length=500)
     product_price = FloatField(required=True, min_value=1)
     is_featured = BooleanField(required=False)
     created_by = ReferenceField(
@@ -15,7 +15,7 @@ class Product(Document):
         "type": "object",
         "properties": {
             "product_name": {"type": "string", "minLength": 5, "maxLength": 30},
-            "product_desc": {"type": "string", "minLength": 5, "maxLength": 100},
+            "product_desc": {"type": "string", "minLength": 5, "maxLength": 500},
             "product_price": {"type": "number"},
             "is_featured": {"type": "boolean", "maxLength": 10},
         },
@@ -37,6 +37,7 @@ class Cart(Document):
         "required": ["product_id"]
     }
 
+# print(Cart.add_to_cart_schema)
 
 # from abc import ABC, abstractmethod
 # from flask import request

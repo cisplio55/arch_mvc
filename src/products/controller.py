@@ -6,6 +6,7 @@ from src.authantication.models import Register
 from .models import Product, Cart
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
+import json
 
 @jwt_required(fresh=False)
 def create_product(schema = Product.create_product_schema):
@@ -48,15 +49,16 @@ def add_to_cart(schema = Cart.add_to_cart_schema):
     except Exception as e:
         return errorresponse("add_to_cart", e)
         
-
-@jwt_required(fresh=False)
+# @jwt_required(fresh=False)
 def get_product_details(product_id, product_name, user_name, schema = Cart.add_to_cart_schema):
     try:
         enteredInfo = getenteredInfo(request)
-        # product_id = enteredInfo.get("product_id")
-        print(product_id, product_name, user_name, schema, "$$$$$$$$$$$")
-        # API logic here
-        return dataresponse("get_product_details", {"message" : str(product_id) + " : Product detais."})
+        product_id = enteredInfo.get("product_id")
+        # print(product_id, product_name, user_name, schema)
+        product = Product.objects.get(pk = product_id) # 637c674bf8d3426d64a67677
+        return dataresponse("get_product_details", {
+            "product_data" : json.loads(product.to_json())
+            })
     except Exception as e:
         return errorresponse("get_product_details", e)
         
