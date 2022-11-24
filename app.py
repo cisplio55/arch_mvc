@@ -4,7 +4,7 @@ from src.authantication.controller import *
 from src.products.controller import *
 from src.order.controller import *
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
-from yml_handler.flask_route_to_swagger import generate_swagger_yaml
+# from yml_handler.flask_route_to_swagger import generate_swagger_yaml
 from util import dataresponse, errorresponse
 from flask import Flask, render_template, request
 from yaml.loader import SafeLoader
@@ -12,8 +12,10 @@ from flask import Response
 import io
 import yaml
 from yml_handler.swagger_yaml_to_excell import *
+from yml_handler.flask_route_to_swagger import *
 from mongoengine import *
 from util import DB_URI
+
 
 connect(host=DB_URI)   # Provide database connection to mongo engene.
 
@@ -73,7 +75,7 @@ def exportcsv(sheetid):
         service_file_path = "/Users/codeclouds-subhankar/Desktop/subhankar/projects/Tutorial/python_basics/flask/arch_mvc/t-pulsar-369511-2b54d807cd19.json"
         spreadsheet_id = sheetid #"1XZEQQ8WzhnlY-A22uiUuiHv0OX0TlNeON9lFTszFkLs"
         sheet_name = "swagger-yaml-to-table"
-        df = yml_to_df(app, data=generate_swagger_yaml(app))
+        df = yml_to_df(app, data=version20().generate_swagger_yaml(app))
         print(write_to_gsheet(service_file_path, spreadsheet_id, sheet_name, df))
     except Exception as e:
         traceback.print_exc()
@@ -122,12 +124,15 @@ def generate_csv_data():
 @app.route("/utility/swagger/UI/generate_yaml")
 def generate_yaml():
     try:
-        generate_swagger_yaml(app)
+        
+        version20().generate_swagger_yaml(app)
         return dataresponse("generate_yaml", {"mesage" : "Swagger YAML file generated successfully"})
     except Exception as e:
         errorresponse("generate_yaml", e)
 # generate_swagger_yaml(app) # Create swagger file automatically on flask run.
 # ----------------------------------------------------------------------------
+
+
 
 
 
