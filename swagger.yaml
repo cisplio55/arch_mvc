@@ -159,7 +159,7 @@ paths:
               maxLength: 10
               type: boolean
             product_desc:
-              maxLength: 100
+              maxLength: 500
               minLength: 5
               type: string
             product_name:

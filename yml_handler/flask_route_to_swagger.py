@@ -223,8 +223,9 @@ def generate_swagger_yaml(app):
             file.write(data)
         # -------------------------------------------------
 
+        
+        return yaml.load(data)
 
-        return True
     except Exception as e:
         traceback.print_exc()
         return None

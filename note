@@ -47,3 +47,39 @@ The other results are the name of the *args and **kwargs variables, and the defa
 >>> inspect.getfullargspec(foo)
 (['a', 'b', 'c'], 'arglist', 'keywords', (4,))
 
+
+# ------------------------------------
+# Google sheet integraton
+# ------------------------------------
+import pygsheets
+def write_to_gsheet(service_file_path, spreadsheet_id, sheet_name, data_df):
+    """
+    this function takes data_df and writes it under spreadsheet_id
+    and sheet_name using your credentials under service_file_path
+    """
+    gc = pygsheets.authorize(service_file=service_file_path)
+    sh = gc.open_by_key(spreadsheet_id)
+    try:
+        sh.add_worksheet(sheet_name)
+    except:
+        pass
+    wks_write = sh.worksheet_by_title(sheet_name)
+    wks_write.clear('A1',None,'*')
+    wks_write.set_dataframe(data_df, (1,1), encoding='utf-8', fit=True)
+    wks_write.frozen_rows = 1
+Steps to get service_file_path, spreadsheet_id, sheet_name:
+
+Click Sheets API | Google Developers
+Create new project under Dashboard (provide relevant project name and other required information)
+Go to Credentials
+Click on “Create Credentials” and Choose “Service Account”. Fill in all required information viz. Service account name, id, description et. al.
+Go to Step 2 and 3 and Click on “Done”
+Click on your service account and Go to “Keys”
+Click on “Add Key”, Choose “Create New Key” and Select “Json”. Your Service Json File will be downloaded. Put this under your repo folder and path to this file is your service_file_path.
+In that Json, “client_email” key can be found.
+Create a new google spreadsheet. Note the url of the spreadsheet.
+Provide an Editor access to the spreadsheet to "client_email" (step 8) and Keep this service json file while running your python code.
+Note: add json file to .gitignore without fail.
+From url (e.g. https://docs.google.com/spreadsheets/d/1E5gTTkuLTs4rhkZAB8vvGMx7MH008HjW7YOjIOvKYJ1/) extract part between /d/ and / (e.g. 1E5gTTkuLTs4rhkZAB8vvGMx7MH008HjW7YOjIOvKYJ1 in this case) which is your spreadsheet_id.
+sheet_name is the name of the tab in google spreadsheet. By default it is "Sheet1" (unless you have modified it.
+# ------------------------------------

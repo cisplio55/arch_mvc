@@ -24,12 +24,22 @@ app = Flask(
     static_folder='frontend',
 )
 
+
+
+import click
+
+
+
+
 # -----------------------------------------------------------------------------------------
 # JWT authentication.
 # -----------------------------------------------------------------------------------------
 jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = "this-is-secret-key"
 # -----------------------------------------------------------------------------------------
+
+
+
 
 # -----------------------------------------------------------------------------------------
 # Bind controllers,
@@ -54,6 +64,20 @@ app.add_url_rule("/root/product/add_to_cart",  view_func=add_to_cart, methods = 
 # import io
 # import yaml
 # from yml_handler.swagger_yaml_to_excell import *
+
+
+@app.cli.command("exportcsv")
+@click.argument("sheetid")
+def exportcsv(sheetid):
+    try:
+        service_file_path = "/Users/codeclouds-subhankar/Desktop/subhankar/projects/Tutorial/python_basics/flask/arch_mvc/t-pulsar-369511-2b54d807cd19.json"
+        spreadsheet_id = sheetid #"1XZEQQ8WzhnlY-A22uiUuiHv0OX0TlNeON9lFTszFkLs"
+        sheet_name = "swagger-yaml-to-table"
+        df = yml_to_df(app, data=generate_swagger_yaml(app))
+        print(write_to_gsheet(service_file_path, spreadsheet_id, sheet_name, df))
+    except Exception as e:
+        traceback.print_exc()
+
 
 @app.route('/')
 def upload_File_page(name=None):  # To return the file upload UI.

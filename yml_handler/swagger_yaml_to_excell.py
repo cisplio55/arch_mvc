@@ -4,6 +4,10 @@ from yaml.loader import SafeLoader
 import pandas as pd
 import re
 import traceback
+import pygsheets
+import pandas as pd
+
+
 
 def yml_to_df(app, data=None):
     try:
@@ -88,8 +92,30 @@ def yml_to_df(app, data=None):
         df.insert(0, slno.name, slno)
         apitype = df.pop("API Type")
         df.insert(2, apitype.name, apitype)
+        df = df.fillna("")
         # df.to_csv('./yml_handler/output.csv', sl_no=False)     # Prevent to save the data.
         return df
     except Exception as e:
         traceback.print_exc()
 
+
+def write_to_gsheet(service_file_path, spreadsheet_id, sheet_name, data_df):
+    try:
+        """
+        this function takes data_df and writes it under spreadsheet_id
+        and sheet_name using your credentials under service_file_path
+        """
+        gc = pygsheets.authorize(service_file=service_file_path)
+        sh = gc.open_by_key(spreadsheet_id)
+        try:
+            sh.add_worksheet(sheet_name)
+        except:
+            pass
+        wks_write = sh.worksheet_by_title(sheet_name)
+        wks_write.clear('A1',None,'*')
+        wks_write.set_dataframe(data_df, (1,1), encoding='utf-8', fit=True)
+        wks_write.frozen_rows = 1
+        return "Success"
+    except Exception as e:
+        traceback.print_exc()
+        return "Failed to write in google sheet : "+spreadsheet_id
