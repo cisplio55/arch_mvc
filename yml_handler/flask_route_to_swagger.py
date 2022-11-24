@@ -6,29 +6,12 @@ from undecorated import undecorated
 from abc import ABC, abstractmethod
 
 base_format_v20 = { 'swagger': '2.0', 'info': { 'description': 'Pypa API specification, across all products.', 'title': 'Pypa Endpoint for Development', 'version': '1.0.0' }, 'host': 'pypa-api-development.endpoints.huko-312103.cloud.goog', 'x-google-endpoints': [ { 'name': 'pypa-api-development.endpoints.huko-312103.cloud.goog', 'target': '34.149.86.33' } ], 'consumes': [ 'application/json' ], 'produces': [ 'application/json' ], 'schemes': [ 'https', 'http' ], 'security': [ { 'api_key': [], 'pypa_auth': [] } ], 'paths': {}, 'securityDefinitions': { 'api_key': { 'type': 'apiKey', 'name': 'x-api-key', 'in': 'header' }, 'pypa_auth': { 'authorizationUrl': '', 'flow': 'implicit', 'type': 'oauth2', 'x-google-issuer': 'development-endpoint-service@huko-312103.iam.gserviceaccount.com', 'x-google-jwks_uri': 'https: //www.googleapis.com/service_accounts/v1/metadata/x509/development-endpoint-service@huko-312103.iam.gserviceaccount.com', 'x-google-audiences': 'pypa-api-development.endpoints.huko-312103.cloud.goog' } } }
-base_format_v30 = {"paths" : {}}
+# base_format_v30 = {"paths" : {}}
+
 def rm_sc_make_title(str):
     return re.sub('[^a-zA-Z0-9 \n\.]', ' ', str).title()
 
 class swagger(ABC):
-    @abstractmethod
-    def CreateSwaggerSpecificRoute():
-        pass
-    @abstractmethod
-    def CreateSwaggerSpecificParameterArray():
-        pass
-    @abstractmethod
-    def get_default_args():
-        pass
-    @abstractmethod
-    def generate_swagger_yaml():
-        pass
-
-
-class version20(swagger):
-    def __init__(self, base_format = base_format_v20):
-        self.base_format = base_format
-
     def CreateSwaggerSpecificRoute(self, rule):
         route_path = str(rule)   # /multi/level/url/test/{user_id}/{org_id}
         for s in re.findall(r'[^<]+:', str(rule)):
@@ -51,7 +34,6 @@ class version20(swagger):
                 parameter_names.append(("string",s))
         return parameter_names
 
-
     def get_default_args(self, func):
         signature = inspect.signature(func)
         return {
@@ -60,6 +42,14 @@ class version20(swagger):
             if v.default is not inspect.Parameter.empty
         }
 
+    @abstractmethod
+    def generate_swagger_yaml():
+        pass
+
+
+class version20(swagger):
+    def __init__(self, base_format = base_format_v20):
+        self.base_format = base_format
 
     def generate_swagger_yaml(self, app):
         try:

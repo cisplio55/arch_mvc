@@ -15,6 +15,7 @@ from yml_handler.swagger_yaml_to_excell import *
 from yml_handler.flask_route_to_swagger import *
 from mongoengine import *
 from util import DB_URI
+import click
 
 
 connect(host=DB_URI)   # Provide database connection to mongo engene.
@@ -28,7 +29,6 @@ app = Flask(
 
 
 
-import click
 
 
 
