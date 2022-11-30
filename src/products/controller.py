@@ -7,58 +7,81 @@ from .models import Product, Cart
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 import json
+from .models import *
 
-@jwt_required(fresh=False)
-def create_product(schema = Product.create_product_schema):
-    try:
-        enteredInfo = getenteredInfo(request)
-        product = Product(
-            product_name    =  enteredInfo.get("product_name"),
-            product_desc    =  enteredInfo.get("product_desc"),
-            product_price   =  enteredInfo.get("product_price"),
-            is_featured     =  enteredInfo.get("is_featured"),
-            created_by      =  Register.objects.get(pk=get_jwt_identity()),
-        )
-        product.save()
-        return dataresponse("product", {"message" : "Product added successfully."})
-    except Exception as e:
-        return errorresponse("register", e)
+class Create_product_con:
 
-
-@jwt_required(fresh=False)
-def add_to_cart(schema = Cart.add_to_cart_schema):
-    try:
-        enteredInfo = getenteredInfo(request)
-        product_id = enteredInfo.get("product_id")
-        user_id = get_jwt_identity()
+    def __init__(self):
+        self.model = Product
         
-        cart_item = Cart.objects(product = product_id, user = user_id)
-
-        if cart_item.count() == 0:
-            cart = Cart(
-                product =  Product.objects.get(pk=product_id),
-                user    =  Register.objects.get(pk=user_id),
-                count   = 1
+    @jwt_required(fresh=False)
+    def create_product(self):
+        try:
+            enteredInfo = getenteredInfo(request)
+            product = self.model(
+                product_name    =  enteredInfo.get("product_name"),
+                product_desc    =  enteredInfo.get("product_desc"),
+                product_price   =  enteredInfo.get("product_price"),
+                is_featured     =  enteredInfo.get("is_featured"),
+                created_by      =  Register.objects.get(pk=get_jwt_identity()),
             )
-            cart.save()
-        else:
-            cart_item.update_one(inc__count=1)
-            return dataresponse("add_to_cart", {"message" : "Cart item incremented by one."})
+            product.save()
+            return dataresponse("product", {"message" : "Product added successfully."})
+        except Exception as e:
+            return errorresponse("register", e)
+    
+    def get_schema(self):
+        return self.model.create_product_schema
+
+
+class Add_to_cart_con:
+
+    def __init__(self):
+        self.model = Cart
+
+    @jwt_required(fresh=False)
+    def add_to_cart(self):
+        try:
+            enteredInfo = getenteredInfo(request)
+            product_id = enteredInfo.get("product_id")
+            user_id = get_jwt_identity()
             
-        return dataresponse("add_to_cart", {"message" : "Product added to cart."})
-    except Exception as e:
-        return errorresponse("add_to_cart", e)
+            cart_item = Cart.objects(product = product_id, user = user_id)
+
+            if cart_item.count() == 0:
+                cart = Cart(
+                    product =  Product.objects.get(pk=product_id),
+                    user    =  Register.objects.get(pk=user_id),
+                    count   = 1
+                )
+                cart.save()
+            else:
+                cart_item.update_one(inc__count=1)
+                return dataresponse("add_to_cart", {"message" : "Cart item incremented by one."})
+                
+            return dataresponse("add_to_cart", {"message" : "Product added to cart."})
+        except Exception as e:
+            return errorresponse("add_to_cart", e)
+
+    def get_schema(self):
+        return self.model.add_to_cart_schema
+
         
-# @jwt_required(fresh=False)
-def get_product_details(product_id, product_name, user_name, schema = Cart.add_to_cart_schema):
-    try:
-        enteredInfo = getenteredInfo(request)
-        product_id = enteredInfo.get("product_id")
-        # print(product_id, product_name, user_name, schema)
-        product = Product.objects.get(pk = product_id) # 637c674bf8d3426d64a67677
-        return dataresponse("get_product_details", {
-            "product_data" : json.loads(product.to_json())
-            })
-    except Exception as e:
-        return errorresponse("get_product_details", e)
+class Get_product_details_con:
+
+
+    # @jwt_required(fresh=False)
+    def get_product_details(self, product_id, product_name, user_name):
+        try:
+            enteredInfo = getenteredInfo(request)
+            product_id = enteredInfo.get("product_id")
+            # print(product_id, product_name, user_name, schema)
+            product = Product.get(pk = product_id) # 637c674bf8d3426d64a67677
+            return dataresponse("get_product_details", {
+                "product_data" : json.loads(product.to_json())
+                })
+        except Exception as e:
+            return errorresponse("get_product_details", e)
         
+    def get_schema(self):
+        return Cart.add_to_cart_schema

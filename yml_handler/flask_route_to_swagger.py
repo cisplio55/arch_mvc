@@ -11,6 +11,8 @@ base_format_v20 = { 'swagger': '2.0', 'info': { 'description': 'Pypa API specifi
 def rm_sc_make_title(str):
     return re.sub('[^a-zA-Z0-9 \n\.]', ' ', str).title()
 
+ 
+
 class swagger(ABC):
     def CreateSwaggerSpecificRoute(self, rule):
         route_path = str(rule)   # /multi/level/url/test/{user_id}/{org_id}
@@ -105,16 +107,17 @@ class version20(swagger):
                         # Prepare the body with schema.
                         # ----------------------------------------------
                         if method != "get":
+                            # print("__self__", app.view_functions[endpoint].__self__)
+                            # print("__self__.__class__", app.view_functions[endpoint].__self__.__class__)
+                            controller_class =  app.view_functions[endpoint].__self__.__class__
+                            default_schema = controller_class().get_schema() if "get_schema" in dir(controller_class) else {}
                             
-                            default_schema = self.get_default_args(undecorated(app.view_functions[endpoint])).get("schema")
-                            # default_schema = inspect.getcallargs(undecorated(app.view_functions[endpoint])).get("schema")
                             body_parameters = [
                                 {
                                     "in": "body",
                                     "name": ep_as_desc,
                                     "description": description,
-                                    # rule.defaults.get("schema") if rule.defaults is not None else {} #rule.defaults#rv.get_json() if "properties" in rv.get_json() else {},
-                                    "schema": default_schema or {}
+                                    "schema": default_schema
                                 }
                             ]
                         # ----------------------------------------------

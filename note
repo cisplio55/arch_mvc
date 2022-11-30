@@ -83,3 +83,47 @@ Note: add json file to .gitignore without fail.
 From url (e.g. https://docs.google.com/spreadsheets/d/1E5gTTkuLTs4rhkZAB8vvGMx7MH008HjW7YOjIOvKYJ1/) extract part between /d/ and / (e.g. 1E5gTTkuLTs4rhkZAB8vvGMx7MH008HjW7YOjIOvKYJ1 in this case) which is your spreadsheet_id.
 sheet_name is the name of the tab in google spreadsheet. By default it is "Sheet1" (unless you have modified it.
 # ------------------------------------
+
+
+
+import importlib
+module = importlib.import_module('my_package.my_module')
+my_class = getattr(module, 'MyClass')
+my_instance = my_class()
+
+
+
+class fruit:
+    def __init__(self, fruit):
+        self.fruit = fruit
+a = fruit("orange")
+print (a.__class__)
+print (a.__class__.__name__)
+
+
+
+
+
+def get_class_that_defined_method(method):
+    method_name = method.__name__
+    print(method.__self__, "#######")
+    print(method.__self__.__class__, "#######")
+    if method.__self__:    
+        classes = [method.__self__.__class__]
+    else:
+        #unbound method
+        classes = [method.im_class]
+
+    print(classes, "$$$$$$$$$$$$$")
+
+    while classes:
+        c = classes.pop()
+        print(c, "pppppppppppp")
+        print(c.__dict__, "c.dictttttttt")
+        
+        if method_name in c.__dict__:
+            return c
+        else:
+            classes = list(c.__bases__) + classes
+    return None
+
