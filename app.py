@@ -25,7 +25,7 @@ connect(host=DB_URI)   # Provide database connection to mongo engene.
 app = Flask(
     __name__,
     template_folder='frontend',
-    static_url_path='/static',
+    static_url_path=None, #'/static',
     static_folder='frontend',
 )
 
