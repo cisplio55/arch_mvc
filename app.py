@@ -53,6 +53,20 @@ app.add_url_rule("/root/product/get_product_details/<int:product_id>/<string:pro
 # -----------------------------------------------------------------------------------------
 
 
+# @app.cli.command("exportcsv")
+# @click.argument("sheetid")
+# def exportcsv(sheetid):
+#     # flask exportcsv 1XZEQQ8WzhnlY-A22uiUuiHv0OX0TlNeON9lFTszFkLs
+#     try:
+#         service_file_path = "/Users/codeclouds-subhankar/Desktop/subhankar/projects/Tutorial/python_basics/flask/arch_mvc/t-pulsar-369511-2b54d807cd19.json"
+#         spreadsheet_id = sheetid #"1XZEQQ8WzhnlY-A22uiUuiHv0OX0TlNeON9lFTszFkLs"
+#         sheet_name = "swagger-yaml-to-table"
+#         df = yml_to_df(app, data=Version20().generate_swagger_yaml(app))
+#         print(write_to_gsheet(service_file_path, spreadsheet_id, sheet_name, df))
+#     except Exception as e:
+#         traceback.print_exc()
+
+
 @app.cli.command("exportcsv")
 @click.argument("sheetid")
 def exportcsv(sheetid):
@@ -61,7 +75,7 @@ def exportcsv(sheetid):
         service_file_path = "/Users/codeclouds-subhankar/Desktop/subhankar/projects/Tutorial/python_basics/flask/arch_mvc/t-pulsar-369511-2b54d807cd19.json"
         spreadsheet_id = sheetid #"1XZEQQ8WzhnlY-A22uiUuiHv0OX0TlNeON9lFTszFkLs"
         sheet_name = "swagger-yaml-to-table"
-        df = yml_to_df(app, data=Version20().generate_swagger_yaml(app))
+        df = yml_to_df(app, data=generate_swagger_yaml(app))
         print(write_to_gsheet(service_file_path, spreadsheet_id, sheet_name, df))
     except Exception as e:
         traceback.print_exc()
@@ -79,19 +93,6 @@ for rule in rules:
    print(str(rule))
 print("------------------------------------")
 # -----------------------------------------------------------------------------------------
-
-# import sys
-# def print_method_module(method):
-#     def printer(self):
-#         name = self.__module__
-#         if name == '__main__':
-#             filename = sys.modules[self.__module__].__file__
-#             name = os.path.splitext(os.path.basename(filename))[0]
-#         print(name, "$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-#         return method(self)
-#     return printer
-
-# print(Add_to_cart_con().get_schema.__module__, "###################")
 
 
 if __name__ == "__main__":
