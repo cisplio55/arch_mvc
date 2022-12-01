@@ -47,25 +47,25 @@ class Swagger(ABC):
 
     def get_schema(self, app, endpoint):
         controller_method = app.view_functions[endpoint]
-        controller_class =  controller_method.__self__.__class__()
+        controller_class_obj =  controller_method.__self__.__class__()
+        
         # -----------------------------
         #using import module.
         # -----------------------------
+        # controller_method = app.view_functions[endpoint]
+        # controller_class_obj =  controller_method.__self__.__class__()
         # controller_module = controller_method.__module__
-        # controller_class_name = controller_class.__class__.__name__
+        # controller_class_name = controller_class_obj.__class__.__name__
         # module = importlib.import_module(controller_module)
-        # my_class = getattr(module, controller_class_name)
-        # my_instance = my_class()
+        # controller_class = getattr(module, controller_class_name)
+        # controller_class_obj = controller_class()
         # -----------------------------
-        default_schema = controller_class.get_schema() if "get_schema" in dir(controller_class) else {}
+        default_schema = controller_class_obj.get_schema() if "get_schema" in dir(controller_class_obj) else {}
         return default_schema
                             
-
-
     @abstractmethod
     def generate_swagger_yaml():
         pass
-
 
 class Version20(Swagger):
     def __init__(self, base_format = base_format_v20):
