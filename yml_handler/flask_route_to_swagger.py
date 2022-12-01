@@ -4,6 +4,7 @@ import traceback
 import inspect
 from undecorated import undecorated
 from abc import ABC, abstractmethod
+import importlib
 
 base_format_v20 = { 'swagger': '2.0', 'info': { 'description': 'Pypa API specification, across all products.', 'title': 'Pypa Endpoint for Development', 'version': '1.0.0' }, 'host': 'pypa-api-development.endpoints.huko-312103.cloud.goog', 'x-google-endpoints': [ { 'name': 'pypa-api-development.endpoints.huko-312103.cloud.goog', 'target': '34.149.86.33' } ], 'consumes': [ 'application/json' ], 'produces': [ 'application/json' ], 'schemes': [ 'https', 'http' ], 'security': [ { 'api_key': [], 'pypa_auth': [] } ], 'paths': {}, 'securityDefinitions': { 'api_key': { 'type': 'apiKey', 'name': 'x-api-key', 'in': 'header' }, 'pypa_auth': { 'authorizationUrl': '', 'flow': 'implicit', 'type': 'oauth2', 'x-google-issuer': 'development-endpoint-service@huko-312103.iam.gserviceaccount.com', 'x-google-jwks_uri': 'https: //www.googleapis.com/service_accounts/v1/metadata/x509/development-endpoint-service@huko-312103.iam.gserviceaccount.com', 'x-google-audiences': 'pypa-api-development.endpoints.huko-312103.cloud.goog' } } }
 # base_format_v30 = {"paths" : {}}
@@ -13,7 +14,7 @@ def rm_sc_make_title(str):
 
  
 
-class swagger(ABC):
+class Swagger(ABC):
     def CreateSwaggerSpecificRoute(self, rule):
         route_path = str(rule)   # /multi/level/url/test/{user_id}/{org_id}
         for s in re.findall(r'[^<]+:', str(rule)):
@@ -44,12 +45,29 @@ class swagger(ABC):
             if v.default is not inspect.Parameter.empty
         }
 
+    def get_schema(self, app, endpoint):
+        controller_method = app.view_functions[endpoint]
+        controller_class =  controller_method.__self__.__class__()
+        # -----------------------------
+        #using import module.
+        # -----------------------------
+        # controller_module = controller_method.__module__
+        # controller_class_name = controller_class.__class__.__name__
+        # module = importlib.import_module(controller_module)
+        # my_class = getattr(module, controller_class_name)
+        # my_instance = my_class()
+        # -----------------------------
+        default_schema = controller_class.get_schema() if "get_schema" in dir(controller_class) else {}
+        return default_schema
+                            
+
+
     @abstractmethod
     def generate_swagger_yaml():
         pass
 
 
-class version20(swagger):
+class Version20(Swagger):
     def __init__(self, base_format = base_format_v20):
         self.base_format = base_format
 
@@ -107,11 +125,7 @@ class version20(swagger):
                         # Prepare the body with schema.
                         # ----------------------------------------------
                         if method != "get":
-                            # print("__self__", app.view_functions[endpoint].__self__)
-                            # print("__self__.__class__", app.view_functions[endpoint].__self__.__class__)
-                            controller_class =  app.view_functions[endpoint].__self__.__class__
-                            default_schema = controller_class().get_schema() if "get_schema" in dir(controller_class) else {}
-                            
+                            default_schema = self.get_schema(app, endpoint)
                             body_parameters = [
                                 {
                                     "in": "body",
@@ -166,7 +180,7 @@ class version20(swagger):
             traceback.print_exc()
             return None
 
-# class version30(version20):
+# class version30(Version20):
 #     def __init__(self, base_format=base_format_v30):
 #         self.base_format = base_format
         
