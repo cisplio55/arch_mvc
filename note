@@ -128,3 +128,30 @@ def get_class_that_defined_method(method):
             classes = list(c.__bases__) + classes
     return None
 
+
+
+
+
+def make_quted_route_in_yaml_file(app, file_path):
+    try:
+        data = None
+        with open(file_path, 'r') as file:
+            data = file.read()
+        for rule in app.url_map.iter_rules():
+            route_path = CreateSwaggerSpecificRoute(rule)
+            data = data.replace(route_path+":", '"'+route_path+'":')
+        with open(file_path, 'w') as file:
+            file.write(data)
+        return data
+    except Exception as e:
+        traceback.print_exc()
+        return None
+
+
+def get_default_args(func):
+    signature = inspect.signature(func)
+    return {
+        k: v.default
+        for k, v in signature.parameters.items()
+        if v.default is not inspect.Parameter.empty
+    }

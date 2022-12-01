@@ -1,96 +1,10 @@
 import yaml
 import re
 import traceback
-import inspect
-from undecorated import undecorated
-from abc import ABC, abstractmethod
-import importlib
 
 base_format = { 'swagger': '2.0', 'info': { 'description': 'Pypa API specification, across all products.', 'title': 'Pypa Endpoint for Development', 'version': '1.0.0' }, 'host': 'pypa-api-development.endpoints.huko-312103.cloud.goog', 'x-google-endpoints': [ { 'name': 'pypa-api-development.endpoints.huko-312103.cloud.goog', 'target': '34.149.86.33' } ], 'consumes': [ 'application/json' ], 'produces': [ 'application/json' ], 'schemes': [ 'https', 'http' ], 'security': [ { 'api_key': [], 'pypa_auth': [] } ], 'paths': {}, 'securityDefinitions': { 'api_key': { 'type': 'apiKey', 'name': 'x-api-key', 'in': 'header' }, 'pypa_auth': { 'authorizationUrl': '', 'flow': 'implicit', 'type': 'oauth2', 'x-google-issuer': 'development-endpoint-service@huko-312103.iam.gserviceaccount.com', 'x-google-jwks_uri': 'https: //www.googleapis.com/service_accounts/v1/metadata/x509/development-endpoint-service@huko-312103.iam.gserviceaccount.com', 'x-google-audiences': 'pypa-api-development.endpoints.huko-312103.cloud.goog' } } }
 
-def rm_sc_make_title(str):
-    return re.sub('[^a-zA-Z0-9 \n\.]', ' ', str).title()
-
-def CreateSwaggerSpecificRoute(rule):
-    try:
-        route_path = str(rule)   # /multi/level/url/test/{user_id}/{org_id}
-        for s in re.findall(r'[^<]+:', str(rule)):
-            route_path = route_path.replace(s, "")
-        route_path = route_path.replace("<", "{")
-        route_path = route_path.replace(">", "}")
-        return route_path
-    except Exception as e:
-        traceback.print_exc()
-        return None
-
-def CreateSwaggerSpecificParameterArray(rule):
-    try:
-        replacement = {"int":"integer"}
-        parameter_names = []#[s.replace(">", "") for s in re.findall(r'[^<]+>', str(rule))]
-        for s in re.findall(r'[^<]+>', str(rule)):
-            s = s.replace(">", "")
-            if ":" in s:   # "type:param_name"
-                param = list(s.split(":"))
-                if param[0] in replacement.keys(): # Replace the type with swagger specific keword. e.g. int > integer
-                    param[0] = replacement[param[0]]
-                parameter_names.append(param)
-            else:
-                parameter_names.append(("string",s))
-        return parameter_names
-
-    except Exception as e:
-        traceback.print_exc()
-        return None
-
-def get_default_args(func):
-    try:
-        signature = inspect.signature(func)
-        return {
-            k: v.default
-            for k, v in signature.parameters.items()
-            if v.default is not inspect.Parameter.empty
-        }
-    except Exception as e:
-        traceback.print_exc()
-        return None
-
-def get_schema(app, endpoint):
-    try:
-        controller_method = app.view_functions[endpoint]
-        controller_class_obj =  controller_method.__self__.__class__()
-        # -----------------------------
-        #using importlib.import_module.
-        # -----------------------------
-        # controller_method = app.view_functions[endpoint]
-        # controller_class_obj =  controller_method.__self__.__class__()
-        # controller_module = controller_method.__module__
-        # controller_class_name = controller_class_obj.__class__.__name__
-        # module = importlib.import_module(controller_module)
-        # controller_class = getattr(module, controller_class_name)
-        # controller_class_obj = controller_class()
-        # -----------------------------
-        default_schema = controller_class_obj.get_schema() if "get_schema" in dir(controller_class_obj) else {}
-        return default_schema
-    except Exception as e:
-        traceback.print_exc()
-        return None
-
-def make_quted_route_in_yaml_file(app, file_path):
-    try:
-        data = None
-        with open(file_path, 'r') as file:
-            data = file.read()
-        for rule in app.url_map.iter_rules():
-            route_path = CreateSwaggerSpecificRoute(rule)
-            data = data.replace(route_path+":", '"'+route_path+'":')
-        with open(file_path, 'w') as file:
-            file.write(data)
-        return data
-    except Exception as e:
-        traceback.print_exc()
-        return None
-
-def generate_swagger_yaml(app):
+def generate_swagger_yaml(app, base_format):
     try:
         for rule in app.url_map.iter_rules():
             # Do not include static urls. So just skip if the there is static rule.
@@ -105,13 +19,35 @@ def generate_swagger_yaml(app):
             output_yaml_file = "swagger.yaml"
             endpoint = rule.endpoint
             desc_200 = {"description": "Success"}
-            route_path = CreateSwaggerSpecificRoute(rule)
-            # Create a parameter array from rule
-            parameter_names = CreateSwaggerSpecificParameterArray(rule) # list(rule.arguments) # has to replace it
+
+            # ----------------------------------
+            # CreateSwaggerSpecificRoute
+            # ----------------------------------
+            route_path = str(rule)   # /multi/level/url/test/{user_id}/{org_id}
+            for s in re.findall(r'[^<]+:', str(rule)):
+                route_path = route_path.replace(s, "")
+            route_path = route_path.replace("<", "{")
+            route_path = route_path.replace(">", "}")
+            # ----------------------------------
+
+            # ------------------------------------
+            # CreateSwaggerSpecificParameterArray
+            # ------------------------------------
+            replacement = {"int":"integer"}
+            parameter_names = []#[s.replace(">", "") for s in re.findall(r'[^<]+>', str(rule))]
+            for s in re.findall(r'[^<]+>', str(rule)):
+                s = s.replace(">", "")
+                if ":" in s:   # "type:param_name"
+                    param = list(s.split(":"))
+                    if param[0] in replacement.keys(): # Replace the type with swagger specific keword. e.g. int > integer
+                        param[0] = replacement[param[0]]
+                    parameter_names.append(param)
+                else:
+                    parameter_names.append(("string",s))
             # -----------------------------------
 
-            description = rm_sc_make_title(route_path)  # Remove special character abd Make a description
-            ep_as_desc = rm_sc_make_title(endpoint)
+            description = re.sub('[^a-zA-Z0-9 \n\.]', ' ', route_path).title()  #rm_sc_make_title(route_path)  # Remove special character abd Make a description
+            ep_as_desc = re.sub('[^a-zA-Z0-9 \n\.]', ' ', endpoint).title()     #rm_sc_make_title(endpoint)
             option_details = {  # Do this block when parameter is availabe.
                 'description': ep_as_desc,
                 "summary": ep_as_desc,
@@ -143,7 +79,11 @@ def generate_swagger_yaml(app):
                     # Prepare the body with schema.
                     # ----------------------------------------------
                     if method != "get":
-                        default_schema = get_schema(app, endpoint)
+                        
+                        controller_method = app.view_functions[endpoint]
+                        controller_class_obj =  controller_method.__self__.__class__()
+                        default_schema = controller_class_obj.get_schema() if "get_schema" in dir(controller_class_obj) else {}
+                    
                         body_parameters = [
                             {
                                 "in": "body",
@@ -179,8 +119,27 @@ def generate_swagger_yaml(app):
             with open(output_yaml_file, 'w') as f:
                 data = yaml.dump(base_format, f)
 
-        data = make_quted_route_in_yaml_file(app, output_yaml_file)  # Modify the router path to keep inside quotation
-
+        # -------------------------------------------------
+        # Modify the router path to keep inside quotation
+        # -------------------------------------------------
+        data = None
+        with open(output_yaml_file, 'r') as file:
+            data = file.read()
+        for rule in app.url_map.iter_rules():
+            # route_path = CreateSwaggerSpecificRoute(rule)
+            # ----------------------------------------
+            # CreateSwaggerSpecificRoute
+            # ----------------------------------------
+            route_path = str(rule)   # /multi/level/url/test/{user_id}/{org_id}
+            for s in re.findall(r'[^<]+:', str(rule)):
+                route_path = route_path.replace(s, "")
+            route_path = route_path.replace("<", "{")
+            route_path = route_path.replace(">", "}")
+            # ----------------------------------------
+            data = data.replace(route_path+":", '"'+route_path+'":')
+        with open(output_yaml_file, 'w') as file:
+            file.write(data)
+        # -------------------------------------------------
         return yaml.load(data)
 
     except Exception as e:
